@@ -3,6 +3,7 @@ import {Room, SignalementMessage} from "./lib/Room.js";
 import {PeerManager} from "./lib/PeerManager.js";
 
 /**
+ * @module Implémentation signalement SSE et ICE
  * Message handler sur le Salon
  * @param message
  */

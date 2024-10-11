@@ -1,5 +1,6 @@
 import axios from "axios";
 
+//@module Implémentation signalement SSE et ICE
 export class Room {
     apiURL = import.meta.env.VITE_API_URL + '/room'
     roomID= Math.random().toString(36).substring(2, 10);
@@ -14,6 +15,7 @@ export class Room {
     roomIdSpan = document.querySelector('[data-room-id]')
     clientIdSpan = document.querySelector('[data-client-id]')
 
+    //@module Implémentation signalement SSE et ICE
     constructor(onMessage) {
         this.roomForm.onsubmit = this.handleJoin.bind(this)
         this.onMessage = onMessage
@@ -21,6 +23,7 @@ export class Room {
         this.join(1)
     }
 
+    //@module Implémentation signalement SSE et ICE
     handleJoin(event){
         event.preventDefault()
         const payload = new FormData(this.roomForm)
@@ -29,6 +32,7 @@ export class Room {
         this.join()
     }
 
+    //@module Implémentation signalement SSE et ICE
     join(initiator = 0) {
         this.eventSource?.close()
         this.eventSource = new EventSource(this.apiURL + "/" + this.roomID + "?initiator=" + initiator);
@@ -38,7 +42,7 @@ export class Room {
     }
 
     /**
-     *
+     * @module Implémentation signalement SSE et ICE
      * @param {SignalementMessage} payload
      * @return {Promise<axios.AxiosResponse<any>>}
      */
@@ -48,12 +52,14 @@ export class Room {
         return await axios.post(this.apiURL + "/" + this.roomID, message)
     }
 
+    //@module Implémentation signalement SSE et ICE
     setClientID(clientID){
         this.clientID = clientID
         this.clientIdSpan.innerHTML = clientID
     }
 }
 
+//@module Implémentation signalement SSE et ICE
 export class SignalementMessage {
     static TYPES = {
         OFFER : "offer",

@@ -1,6 +1,7 @@
 import {RTCPeer} from "./RTCPeer.js";
 import {render} from "sass";
 
+//@module Votre première peer WebRTC (events, et state de l’objet PeerConnectection)
 export class PeerManager{
 
     videoList = document.querySelector('[data-video-container]')
@@ -18,24 +19,12 @@ export class PeerManager{
     }
 
     /**
-     *
+     * Créer une Paire RTC
      * @param {Boolean} initior
      * @return {RTCPeer}
      */
     createPeer(initior, remoteClientId){
-        const peer = new RTCPeer({
-            iceServers:[
-                {
-                    urls: [
-                        'stun:stun.l.google.com:19302',
-                        'stun:stun1.l.google.com:19302',
-                        'stun:stun2.l.google.com:19302',
-                        'stun:stun3.l.google.com:19302',
-                        'stun:stun4.l.google.com:19302',
-                    ],
-                }
-            ]
-        })
+        const peer = new RTCPeer()
 
         this.stream.getTracks().forEach(track=>{
             peer.addTrack(track)
@@ -48,19 +37,27 @@ export class PeerManager{
 
         this.render()
 
+        //@module Votre première peer WebRTC (events, et state de l’objet PeerConnectection)
         peer.onconnectionstatechange = () => this.render()
+        //@module Votre première peer WebRTC (events, et state de l’objet PeerConnectection)
         peer.handleRemoteTrack(() => this.render())
-
 
         return peer
     }
 
+    /**
+     * //@module Votre première peer WebRTC (events, et state de l’objet PeerConnectection)
+     * Affiche les videos des paires qui on un stream en cours
+     */
     render(){
         while(this.videoList.firstChild){
             this.videoList.firstChild.remove()
         }
 
+        // @module Communication - Les MediaChannel
         for(let peerElement of this.peers){
+            if(peerElement.peer.connectionState !== "connected") continue
+            if(peerElement.peer.remoteStream.getTracks().length == 0) continue
             const video = document.createElement("video")
             video.srcObject = peerElement.peer.remoteStream
             this.videoList.appendChild(video)
@@ -69,7 +66,7 @@ export class PeerManager{
     }
 
     /**
-     * Recupère une peer précédement créer
+     * Récupère une peer précédemment créer
      * @param remoteClientId
      * @return {RTCPeer|null}
      */
