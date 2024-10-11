@@ -1,11 +1,11 @@
-export class RoomEventEmitter{
+module.exports = class RoomEventEmitter{
     static instance = null
     listener = []
     static getInstance(){
-        if(!RoomObserver.instance){
-            RoomObserver.instance = new RoomObserver
+        if(!RoomEventEmitter.instance){
+            RoomEventEmitter.instance = new RoomEventEmitter
         }
-        return RoomObserver.instance
+        return RoomEventEmitter.instance
     }
 
     emit(event, payload){

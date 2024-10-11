@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebRTC - Cours</title>
+  </head>
+  <body>
+    <header>
+      <h1>Visioconférence WebRTC</h1>
+    </header>
+    <form data-room-form>
+      <h3>Rejoindre un salon </h3>
+      <div>
+        <p>
+          Votre salon actuel <span data-room-id></span>, Client ID : <span data-client-id></span>
+        </p>
+        <label for="roomId">Ou salon a rejoindre</label>
+        <input type="text" id="roomId" name="roomId" />
+        <button>Soumettre</button>
+      </div>
+    </form>
+
+    <main data-video-container>
+      <video src=""></video>
+    </main>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
