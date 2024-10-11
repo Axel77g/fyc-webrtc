@@ -11,7 +11,7 @@ app.get("/room/:id",(req,res)=>{
     res.setHeader('Connection', 'keep-alive');
     res.flushHeaders();
 
-    let instanceRoomEmitter = RoomEventEmitter.getInstance()
+    const instanceRoomEmitter = RoomEventEmitter.getInstance()
 
     instanceRoomEmitter.on("message",(payload)=>{
         res.write(`data: ${JSON.stringify(payload)}\\n\\n`)
@@ -22,9 +22,13 @@ app.get("/room/:id",(req,res)=>{
     });
 })
 
+const MESSAGE_TYPES = ["iceCandidate","answer","offer"]
 app.post("/room/:id",(req,res)=>{
     const body = req.body
-
+    if(!MESSAGE_TYPES.includes(body?.type)) res.sendStatus(400)
+    const instanceRoomEmitter = RoomEventEmitter.getInstance()
+    instanceRoomEmitter.emit("message",body)
+    res.sendStatus(200)
 })
 
 app.listen(8080,()=>{
