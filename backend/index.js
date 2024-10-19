@@ -1,6 +1,6 @@
 const express = require("express")
 const cors = require("cors")
-const RoomEventEmitter = require("./RoomEventEmitter")
+const roomMessager = require("./lib/RoomMessager")
 const app = express()
 
 app.use(express.json())
@@ -15,30 +15,32 @@ app.get("/room/:id",(req,res)=>{
     res.setHeader('Connection', 'keep-alive');
     res.flushHeaders();
 
-    const initiator = Boolean(Number(req.query?.initiator))
-    const uniqueIdClient = initiator ? req.params.id : Math.random().toString(36).substring(2, 10);
+    const ROOM_ID = req.params.id
 
-    const instanceRoomEmitter = RoomEventEmitter.getInstance()
+    const initiator = Boolean(Number(req.query?.initiator))
+    const CLIENT_ID = initiator ? ROOM_ID : Math.random().toString(36).substring(2, 10);
+
+    const instanceRoomEmitter = roomMessager.getInstance()
 
     // broadcast un event a tous les clients connectés
-    instanceRoomEmitter.emit(`message-${req.params.id}`,{
+    instanceRoomEmitter.emit(`message-${ROOM_ID}`,{
         type:"new",
-        clientID: uniqueIdClient
+        clientID: CLIENT_ID
     })
 
     // on écoute tous les messages privés
-    instanceRoomEmitter.on(`message-${req.params.id}-${uniqueIdClient}`,(payload)=>{
+    instanceRoomEmitter.on(`message-${ROOM_ID}-${CLIENT_ID}`,(payload)=>{
         res.write(`data: ${JSON.stringify(payload)}\n\n`)
     })
 
     // on envoie l'id au client
-    instanceRoomEmitter.emit(`message-${req.params.id}-${uniqueIdClient}`,{
+    instanceRoomEmitter.emit(`message-${ROOM_ID}-${CLIENT_ID}`,{
         type:"connected",
-        clientID: uniqueIdClient
+        clientID: CLIENT_ID
     })
 
     // on écoute les messages broadcast au salon
-    instanceRoomEmitter.on(`message-${req.params.id}`,(payload)=>{
+    instanceRoomEmitter.on(`message-${ROOM_ID}`,(payload)=>{
         res.write(`data: ${JSON.stringify(payload)}\n\n`)
     })
 
@@ -49,17 +51,19 @@ app.get("/room/:id",(req,res)=>{
 
 const MESSAGE_TYPES = ["iceCandidate","answer","offer"]
 app.post("/room/:id",(req,res)=>{
+    const ROOM_ID = req.params.id
+
     const body = req.body
     if(!MESSAGE_TYPES.includes(body?.type)) res.sendStatus(400)
 
-    const instanceRoomEmitter = RoomEventEmitter.getInstance()
-    if("to" in body){
-        // on envoie au client concerné
-        instanceRoomEmitter.emit(`message-${req.params.id}-${body.to}`, body)
-    }else{
-        // broadcast message
-        instanceRoomEmitter.emit(`message-${req.params.id}`,body)
+    const instanceRoomEmitter = roomMessager.getInstance()
+
+    if("to" in body){ // on envoie au client concerné
+        instanceRoomEmitter.emit(`message-${ROOM_ID}-${body.to}`, body)
+    }else{ // broadcast message a tout le salon
+        instanceRoomEmitter.emit(`message-${ROOM_ID}`,body)
     }
+
     res.sendStatus(200)
 })
 

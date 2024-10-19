@@ -1,13 +1,5 @@
-module.exports = class RoomEventEmitter{
-    static instance = null
+export class EventEmitter{
     listener = []
-    static getInstance(){
-        if(!RoomEventEmitter.instance){
-            RoomEventEmitter.instance = new RoomEventEmitter
-        }
-        return RoomEventEmitter.instance
-    }
-
     emit(event, payload){
         if(!(event in this.listener)) return;
         let callbacks = this.listener[event]

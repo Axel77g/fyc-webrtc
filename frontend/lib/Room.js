@@ -18,7 +18,7 @@ export class Room {
     //@module Implémentation signalement SSE et ICE
     constructor(onMessage) {
         this.roomForm.onsubmit = this.handleJoin.bind(this)
-        this.onMessage = onMessage
+        this.onMessage = onMessage.bind(this)
         this.roomIdSpan.innerHTML = this.roomID
         this.join(1)
     }
