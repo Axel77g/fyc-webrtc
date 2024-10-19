@@ -2,11 +2,22 @@ const express = require("express")
 const cors = require("cors")
 const roomMessager = require("./lib/RoomMessager")
 const app = express()
+const path = require("path")
 
 app.use(express.json())
 app.use(cors({
     origin:"*"
 }))
+
+app.use(express.static("./public"))
+
+app.use((req,res,next)=>{
+    let dateFormated = new Date().toLocaleString()
+    let logMessage = `${dateFormated} - ${req.method} - ${req.url}`
+    console.log(logMessage)
+    next()
+})
+
 
 app.get("/room/:id",(req,res)=>{
     res.setHeader('Cache-Control', 'no-cache');
@@ -67,6 +78,9 @@ app.post("/room/:id",(req,res)=>{
     res.sendStatus(200)
 })
 
+
 app.listen(8080,()=>{
-    console.log("Serveur est prêt et écoute sur le port 8080")
+    console.log("Serveur est prêt et écoute sur le port " + 8080)
 })
+
+module.exports = app
