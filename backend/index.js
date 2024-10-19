@@ -2,9 +2,10 @@ const express = require("express")
 const cors = require("cors")
 const roomMessager = require("./lib/RoomMessager")
 const app = express()
-const path = require("path")
 
 const uniqueIDAPPRuntime = Math.random().toString(36).substring(2, 10);
+const instanceRoomEmitter = roomMessager.getInstance()
+
 
 app.use(express.json())
 app.use(cors({
@@ -33,8 +34,6 @@ app.get("/room/:id",(req,res)=>{
 
     const initiator = Boolean(Number(req.query?.initiator))
     const CLIENT_ID = initiator ? ROOM_ID : Math.random().toString(36).substring(2, 10);
-
-    const instanceRoomEmitter = roomMessager.getInstance()
 
     // broadcast un event a tous les clients connectés
     instanceRoomEmitter.emit(`message-${ROOM_ID}`,{
@@ -69,8 +68,6 @@ app.post("/room/:id",(req,res)=>{
 
     const body = req.body
     if(!MESSAGE_TYPES.includes(body?.type)) res.sendStatus(400)
-
-    const instanceRoomEmitter = roomMessager.getInstance()
 
     if("to" in body){ // on envoie au client concerné
         instanceRoomEmitter.emit(`message-${ROOM_ID}-${body.to}`, body)
