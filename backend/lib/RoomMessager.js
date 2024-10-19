@@ -1,9 +1,11 @@
 module.exports = class RoomMessager{
     static instance = null
     listener = []
+    id= Math.random().toString(36).substring(2, 10)
     static getInstance(){
         if(!RoomMessager.instance){
-            RoomMessager.instance = new RoomMessager
+            RoomMessager.instance = new RoomMessager()
+            console.log("RoomMessager instance created", RoomMessager.instance.id)
         }
         return RoomMessager.instance
     }
