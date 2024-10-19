@@ -22,8 +22,6 @@ app.use((req,res,next)=>{
 
 
 app.get("/room/:id",(req,res)=>{
-    console.log(instanceRoomEmitter)
-    console.log(instanceRoomEmitter.id)
     console.log(instanceRoomEmitter.listener)
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Content-Type', 'text/event-stream');
@@ -36,15 +34,22 @@ app.get("/room/:id",(req,res)=>{
     const initiator = Boolean(Number(req.query?.initiator))
     const CLIENT_ID = initiator ? ROOM_ID : Math.random().toString(36).substring(2, 10);
 
+
+
+    // on écoute les messages broadcast au salon
+    const l1 = instanceRoomEmitter.on(`message-${ROOM_ID}`,(payload)=>{
+        res.write(`data: ${JSON.stringify(payload)}\n\n`)
+    })
+
+    // on écoute tous les messages privés
+    const l2 = instanceRoomEmitter.on(`message-${ROOM_ID}-${CLIENT_ID}`,(payload)=>{
+        res.write(`data: ${JSON.stringify(payload)}\n\n`)
+    })
+
     // broadcast un event a tous les clients connectés
     instanceRoomEmitter.emit(`message-${ROOM_ID}`,{
         type:"new",
         clientID: CLIENT_ID
-    })
-
-    // on écoute tous les messages privés
-    instanceRoomEmitter.on(`message-${ROOM_ID}-${CLIENT_ID}`,(payload)=>{
-        res.write(`data: ${JSON.stringify(payload)}\n\n`)
     })
 
     // on envoie l'id au client
@@ -53,13 +58,12 @@ app.get("/room/:id",(req,res)=>{
         clientID: CLIENT_ID
     })
 
-    // on écoute les messages broadcast au salon
-    instanceRoomEmitter.on(`message-${ROOM_ID}`,(payload)=>{
-        res.write(`data: ${JSON.stringify(payload)}\n\n`)
-    })
+    console.log(instanceRoomEmitter.listener)
 
     res.on('close', () => {
         res.end();
+        instanceRoomEmitter.off(`message-${ROOM_ID}`,l1)
+        instanceRoomEmitter.off(`message-${ROOM_ID}-${CLIENT_ID}`,l2)
     });
 })
 
