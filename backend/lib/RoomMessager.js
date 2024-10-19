@@ -12,6 +12,7 @@ module.exports = class RoomMessager{
         console.log("Emit message on ", event)
         if(!(event in this.listener)) return;
         let callbacks = this.listener[event]
+        console.log("Subscribed counts", callbacks.length)
         callbacks.forEach(callback=>{
             callback(payload)
         })
