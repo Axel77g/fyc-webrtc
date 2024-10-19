@@ -1,10 +1,9 @@
 const express = require("express")
 const cors = require("cors")
-const roomMessager = require("./lib/RoomMessager")
+const RoomMessager = require("./lib/RoomMessager")
 const app = express()
 
-const uniqueIDAPPRuntime = Math.random().toString(36).substring(2, 10);
-const instanceRoomEmitter = roomMessager.getInstance()
+const instanceRoomEmitter = new RoomMessager()
 
 
 app.use(express.json())
