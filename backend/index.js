@@ -82,5 +82,3 @@ app.post("/room/:id",(req,res)=>{
 app.listen(8080,()=>{
     console.log("Serveur est prêt et écoute sur le port " + 8080)
 })
-
-module.exports = app

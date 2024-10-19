@@ -9,6 +9,7 @@ module.exports = class RoomMessager{
     }
 
     emit(event, payload){
+        console.log("Emit message on ", event)
         if(!(event in this.listener)) return;
         let callbacks = this.listener[event]
         callbacks.forEach(callback=>{
@@ -17,6 +18,7 @@ module.exports = class RoomMessager{
     }
 
     on(event,callback){
+        console.log("Subscribe to ", event)
         if(!(event in this.listener)) this.listener[event] = []
         this.listener[event].push(callback)
     }
