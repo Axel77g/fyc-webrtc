@@ -41,7 +41,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: frontend-build
-
+          path: frontend/dist
       - name: Copy files to VPS
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
