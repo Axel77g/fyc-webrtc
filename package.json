@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "backend/index.js",
   "scripts": {
-    "build": "cd backend && npm run build-frontend",
+    "build": "cd frontend && npm run build && rm -rf ../backend/public && mv dist ../backend/public",
     "start": "cd backend && npm start"
   },
   "devDependencies": {
