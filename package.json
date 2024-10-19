@@ -1,0 +1,10 @@
+{
+  "name": "fyc",
+  "version": "1.0.0",
+  "main": "backend/index.js",
+  "scripts": {
+    "install" : "cd backend && npm install && cd ../frontend && npm install",
+    "build": "cd backend && npm run build-frontend",
+    "start": "cd backend && npm start"
+  }
+}
