@@ -51,7 +51,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           REMOTE_HOST: ${{ secrets.VPS_HOST }}
           REMOTE_USER: ${{ secrets.VPS_USER }}
-          SOURCE: "frontend/dist"
+          SOURCE: "/~"
           TARGET: ${{ secrets.PATH_TO_DEPLOYMENT_DIRECTORY }}
 
   start-server:
