@@ -35,22 +35,24 @@ app.get("/room/:id",(req,res)=>{
     const CLIENT_ID = initiator ? ROOM_ID : Math.random().toString(36).substring(2, 10);
 
 
-
-    // on écoute les messages broadcast au salon
-    const l1 = instanceRoomEmitter.on(`message-${ROOM_ID}`,(payload)=>{
-        res.write(`data: ${JSON.stringify(payload)}\n\n`)
-    })
-
-    // on écoute tous les messages privés
-    const l2 = instanceRoomEmitter.on(`message-${ROOM_ID}-${CLIENT_ID}`,(payload)=>{
-        res.write(`data: ${JSON.stringify(payload)}\n\n`)
-    })
-
     // broadcast un event a tous les clients connectés
     instanceRoomEmitter.emit(`message-${ROOM_ID}`,{
         type:"new",
         clientID: CLIENT_ID
     })
+
+    // on écoute les messages broadcast au salon
+    const l1 = instanceRoomEmitter.on(`message-${ROOM_ID}`,(payload)=>{
+        console.log("message broadcast receive",payload)
+        res.write(`data: ${JSON.stringify(payload)}\n\n`)
+    })
+
+    // on écoute tous les messages privés
+    const l2 = instanceRoomEmitter.on(`message-${ROOM_ID}-${CLIENT_ID}`,(payload)=>{
+        console.log("private message receive",payload)
+        res.write(`data: ${JSON.stringify(payload)}\n\n`)
+    })
+
 
     // on envoie l'id au client
     instanceRoomEmitter.emit(`message-${ROOM_ID}-${CLIENT_ID}`,{
