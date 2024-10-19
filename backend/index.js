@@ -1,6 +1,7 @@
 const express = require("express")
 const cors = require("cors")
 const RoomMessager = require("./lib/RoomMessager")
+const {i} = require("vite/dist/node/types.d-aGj9QkWt");
 const app = express()
 
 const instanceRoomEmitter = new RoomMessager()
@@ -22,6 +23,8 @@ app.use((req,res,next)=>{
 
 
 app.get("/room/:id",(req,res)=>{
+    console.log(instanceRoomEmitter)
+    console.log(instanceRoomEmitter.listener)
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Access-Control-Allow-Origin', '*');
