@@ -35,7 +35,7 @@ export class Room {
     //@module Implémentation signalement SSE et ICE
     join(initiator = 0) {
         this.eventSource?.close()
-        this.eventSource = new EventSource(this.apiURL + "/" + this.roomID + "?initiator=" + initiator);
+        this.eventSource = new EventSource(this.apiURL + "/" + this.roomID + "/events?initiator=" + initiator);
         this.eventSource.onmessage = (event) => {
             this.onMessage(JSON.parse(event.data))
         };

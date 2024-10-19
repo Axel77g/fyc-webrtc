@@ -21,7 +21,7 @@ app.use((req,res,next)=>{
 })
 
 
-app.get("/room/:id",(req,res)=>{
+app.get("/room/:id/events",(req,res)=>{
     console.log(instanceRoomEmitter.listener)
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Content-Type', 'text/event-stream');
