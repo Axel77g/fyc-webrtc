@@ -29,5 +29,6 @@ module.exports = class RoomMessager{
         let callbacks = this.listener[event]
         let index = callbacks.indexOf(callback)
         if(index !== -1) callbacks.splice(index,1)
+        if(callbacks.length === 0) delete this.listener[event]
     }
 }
