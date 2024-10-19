@@ -1,0 +1,73 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'  # Remplacez par votre version de Node.js
+
+      - name: Install dependencies
+        run: |
+          cd frontend  # Accédez au dossier frontend
+          npm install
+
+      - name: Build application
+        run: |
+          cd frontend  # Accédez au dossier frontend
+          npm run build
+
+      - name: Archive production artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: frontend-build
+          path: frontend/dist
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: frontend-build
+
+      - name: Copy files to VPS
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_PORT: ${{ secrets.VPS_PORT }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          PATH_TO_DEPLOYMENT_DIRECTORY: ${{ secrets.PATH_TO_DEPLOYMENT_DIRECTORY }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          scp -i private_key.pem -P $VPS_PORT -r ./dist/* $VPS_USER@$VPS_HOST:$PATH_TO_DEPLOYMENT_DIRECTORY
+          rm private_key.pem
+
+  start-server:
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - name: Start server on VPS
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+          VPS_PORT: ${{ secrets.VPS_PORT }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          PATH_TO_DEPLOYMENT_DIRECTORY: ${{ secrets.PATH_TO_DEPLOYMENT_DIRECTORY }}
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          ssh -i private_key.pem -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $PATH_TO_DEPLOYMENT_DIRECTORY && git checkout . && git pull && npm install && pm2 restart all"
+          rm private_key.pem
