@@ -45,14 +45,19 @@ jobs:
           name: frontend-build
           path: frontend/dist
 
-      - name: Deploy project with SSH
-        uses: easingthemes/ssh-deploy@v2.1.4
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          REMOTE_HOST: ${{ secrets.VPS_HOST }}
-          REMOTE_USER: ${{ secrets.VPS_USER }}
-          SOURCE: "/~"
-          TARGET: ${{ secrets.PATH_TO_DEPLOYMENT_DIRECTORY }}
+
+        - name: Deploy to VPS
+          env:
+            VPS_HOST: ${{ secrets.VPS_HOST }}
+            VPS_USER: ${{ secrets.VPS_USER }}
+            VPS_PORT: ${{ secrets.VPS_PORT }}
+            SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+            PATH_TO_DEPLOYMENT_DIRECTORY: ${{ secrets.PATH_TO_DEPLOYMENT_DIRECTORY }}
+            run: |
+                echo "$SSH_PRIVATE_KEY" > private_key.pem
+                chmod 600 private_key.pem
+                scp -i private_key.pem -r frontend/dist/* $VPS_USER@$VPS_HOST:$PATH_TO_DEPLOYMENT_DIRECTORY
+                rm private_key.pem
 
   start-server:
     runs-on: ubuntu-latest
@@ -68,5 +73,5 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
-          ssh -i private_key.pem -p $VPS_PORT $VPS_USER@$VPS_HOST "cd $PATH_TO_DEPLOYMENT_DIRECTORY && git checkout . && git pull && npm install && pm2 restart all"
+          ssh -i private_key.pem $VPS_USER@$VPS_HOST "cd $PATH_TO_DEPLOYMENT_DIRECTORY && git checkout . && git pull && npm install && pm2 restart all"
           rm private_key.pem
