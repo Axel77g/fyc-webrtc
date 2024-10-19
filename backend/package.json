@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "build:digitalocean": "npm run build-frontend",
     "build-frontend" : "cd ../frontend && npm run build && rm -r ../backend/public && mv dist ../backend/public"
   },
   "keywords": [],
