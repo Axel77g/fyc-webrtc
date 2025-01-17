@@ -14,7 +14,7 @@ const peerManager = new PeerManager
 const room = new Room(onMessage)
 
 navigator.mediaDevices.getUserMedia({
-    video:true,
+    video:false,
     audio:true
 }).then((stream)=>{
     peerManager.setStream(stream)

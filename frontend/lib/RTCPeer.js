@@ -14,26 +14,32 @@ export class RTCPeer extends RTCPeerConnection{
     // @module Votre première peer WebRTC (events, et state de l’objet PeerConnectection)
     constructor(clientID) {
         super({
-            iceServers:[
-                {
-                    urls: [
-                        'stun:stun.l.google.com:19302',
-                        'stun:stun1.l.google.com:19302',
-                        'stun:stun2.l.google.com:19302',
-                        'stun:stun3.l.google.com:19302',
-                        'stun:stun4.l.google.com:19302',
-                    ],
-                }
-            ]
+            iceServers: [
+                { urls: "stun:stun.l.google.com:19302" },
+                { urls: "stun:stun.l.google.com:5349" },
+                { urls: "stun:stun1.l.google.com:3478" },
+                { urls: "stun:stun1.l.google.com:5349" },
+                { urls: "stun:stun2.l.google.com:19302" },
+                { urls: "stun:stun2.l.google.com:5349" },
+                { urls: "stun:stun3.l.google.com:3478" },
+                { urls: "stun:stun3.l.google.com:5349" },
+                { urls: "stun:stun4.l.google.com:19302" },
+                { urls: "stun:stun4.l.google.com:5349" }
+            ],
         });
-
+        this.addEventListener('icecandidateerror',console.error)
+            this.addEventListener("icegatheringstatechange",console.log)
         this.handleDataChanel()  // @module Communication DataChannel
         this.handleRemoteTrack() // @module Communication - Les MediaChannel
     }
     // @module Implémentation signalement (exemple SSE ?)
     handleIceCandidate(callback){
         this.addEventListener("icecandidate",(candidateEvent) => {
-            if(candidateEvent.candidate === null) return
+            if (!candidateEvent.candidate) {
+                console.log('Got final candidate!');
+                return;
+            }
+            console.log('Got candidate: ', candidateEvent.candidate);
             const iceMessage = new SignalementMessage()
                 .setType(SignalementMessage.TYPES.ICE_CANDIDATE)
                 .setContent(candidateEvent.candidate)
@@ -66,6 +72,7 @@ export class RTCPeer extends RTCPeerConnection{
         channel.addEventListener("close", ()=>{
             this.dataChannels.delete(label)
         })
+        console.log("data channel created",channel)
         return channel
     }
 

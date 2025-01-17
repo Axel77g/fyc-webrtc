@@ -3,15 +3,19 @@ const cors = require("cors")
 const RoomMessager = require("./lib/RoomMessager")
 const app = express()
 
+const BASE_URL = "/visio"
+
 const instanceRoomEmitter = RoomMessager.getInstance()
 
+const router = express.Router()
 
 app.use(express.json())
 app.use(cors({
     origin:"*"
 }))
 
-app.use(express.static("./public"))
+app.use(BASE_URL,router)
+router.use(express.static("./public"))
 
 app.use((req,res,next)=>{
     let dateFormated = new Date().toLocaleString()
@@ -21,8 +25,7 @@ app.use((req,res,next)=>{
 })
 
 
-app.get("/room/:id/events",(req,res)=>{
-    console.log(instanceRoomEmitter.listener)
+router.get("/room/:id/events",(req,res)=>{
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -70,7 +73,7 @@ app.get("/room/:id/events",(req,res)=>{
 })
 
 const MESSAGE_TYPES = ["iceCandidate","answer","offer"]
-app.post("/room/:id",(req,res)=>{
+router.post("/room/:id",(req,res)=>{
     const ROOM_ID = req.params.id
 
     const body = req.body

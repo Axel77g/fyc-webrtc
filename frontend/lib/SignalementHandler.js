@@ -39,7 +39,6 @@ export class SignalementHandler{
     async [SignalementMessage.TYPES.NEW](message){
         const peer = this.peerManager.createPeer(true, message.clientID);
         peer.createDataChannel(RTCPeer.DEFAULT_DATACHANNEL_LABEL) // @important il faut créer une channel
-        peer.handleIceCandidate((iceMessage) => this.room.postMessage(iceMessage.setTo(message.clientID)))
         const offer = await peer.createOffer()
         await peer.setLocalDescription(offer)
 
@@ -47,7 +46,8 @@ export class SignalementHandler{
             .setType(SignalementMessage.TYPES.OFFER)
             .setContent(offer)
             .setTo(message.clientID)
-        this.room.postMessage(responseMessage)
+        await this.room.postMessage(responseMessage)
+        peer.handleIceCandidate((iceMessage) => this.room.postMessage(iceMessage.setTo(message.clientID)))
     }
 
     /**
@@ -58,7 +58,6 @@ export class SignalementHandler{
      */
     async [SignalementMessage.TYPES.OFFER](message){
         const peer = this.peerManager.createPeer(false, message.from)
-        peer.handleIceCandidate((iceMessage) => this.room.postMessage(iceMessage.setTo(message.from)))
         await peer.setRemoteDescription(JSON.parse(message.content)) // @important il faut donner un objet pas une chaine il faut un objet RTCSessionDescriptionInit
         const answer = await peer.createAnswer()
         await peer.setLocalDescription(answer)
@@ -67,7 +66,9 @@ export class SignalementHandler{
             .setType(SignalementMessage.TYPES.ANSWER)
             .setContent(answer)
             .setTo(message.from)
-        this.room.postMessage(responseMessage)
+        await this.room.postMessage(responseMessage)
+        peer.handleIceCandidate((iceMessage) => this.room.postMessage(iceMessage.setTo(message.from)))
+
     }
 
     /**
