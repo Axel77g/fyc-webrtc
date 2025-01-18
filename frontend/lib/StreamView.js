@@ -115,7 +115,7 @@ export class StreamView extends EventTarget {
             const audio = document.createElement("audio")
             //audio.setAttribute("controls", "controls")
             audio.srcObject = this.mediaStream
-            audio.volume = 1;
+            audio.volume = this.peer ? 1 : 0;
             audio.autoplay = true
             this.container.appendChild(audio)
         }else{
