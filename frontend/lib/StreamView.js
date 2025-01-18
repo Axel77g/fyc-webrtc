@@ -44,6 +44,12 @@ export class StreamView extends EventTarget {
                     this.setVideoActive(message.split("=")[1] == "true")
                 }
             })
+
+            this.peer.addEventListener("connectionstatechange",()=>{
+                if(this.peer.connectionState === "disconnected"){
+                    this.render()
+                }
+            })
         }else if(selfMediaStream){
             this.selfStream = selfMediaStream
         }else throw new Error("Please give a peer or a MediaStream to the StreamView")
@@ -67,7 +73,10 @@ export class StreamView extends EventTarget {
             this.container = null;
         }
 
-        if(!this.hasStreamRunning()) return;
+        if(!this.hasStreamRunning()) {
+            if(old) this.videoList.removeChild(old)
+            return this
+        }
 
         this.container = document.createElement("div")
         this.container.classList.add("stream-container")
@@ -78,19 +87,18 @@ export class StreamView extends EventTarget {
             const toggleAudioBtn = new StreamControlButton(this.audioActive,"mic",'mic-off')
 
             toggleVideoBtn.addEventListener("change",()=>{
-                console.log("toggle video",toggleVideoBtn.value)
                 this.setVideoActive(toggleVideoBtn.value)
             })
             toggleAudioBtn.addEventListener("change",()=>{
                 this.setAudioActive(toggleAudioBtn.value)
             })
 
-            this.container.appendChild(toggleAudioBtn)
-            this.container.appendChild(toggleVideoBtn)
+            if(this.mediaStream.getVideoTracks().length !== 0) this.container.appendChild(toggleVideoBtn);
+            if(this.mediaStream.getAudioTracks().length !== 0) this.container.appendChild(toggleAudioBtn);
         }
 
 
-        if(this.videoActive){
+        if(this.videoActive && this.mediaStream.getVideoTracks().length !== 0){
             const video = document.createElement("video")
             video.srcObject = this.mediaStream
             video.volume = 0;
@@ -99,6 +107,7 @@ export class StreamView extends EventTarget {
         }else{
             const placeholder = document.createElement("div")
                 placeholder.classList.add("video-placeholder")
+               if(this.videoActive)  placeholder.innerText = "Aucun flux vidéo disponible"
             this.container.appendChild(placeholder)
         }
 
@@ -115,8 +124,6 @@ export class StreamView extends EventTarget {
             icon.classList.add("audio-off")
             this.container.appendChild(icon)
         }
-
-
         //replace old container if exist
         if(old) {
             this.videoList.replaceChild(this.container, old)
@@ -125,9 +132,6 @@ export class StreamView extends EventTarget {
         {
             this.videoList.appendChild(this.container)
         }
-
-
-
         return this
     }
 }

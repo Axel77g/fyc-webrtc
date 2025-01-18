@@ -2,6 +2,103 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   margin : 0px;
 }
+* {
+  box-sizing: border-box;
+}
+
+/* Styles généraux */
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f9;
+  color: #333;
+}
+
+/* Header */
+header {
+  background-color: #6ea2ef;
+  color: white;
+  padding: 1rem 2rem;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+/* Formulaire */
+form {
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+form h3 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  color: #748fbd;
+}
+
+form div {
+  margin-top: 1rem;
+}
+
+form p {
+  font-size: 1rem;
+  color: #555;
+}
+
+form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+form input[type="text"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+}
+
+form button {
+  display: inline-block;
+  background-color: #6ea2ef;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+form button:hover {
+  background-color: #4975b2;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  form {
+    padding: 1rem;
+  }
+
+  header h1 {
+    font-size: 1.5rem;
+  }
+}
+
+
 
 
 header{
@@ -20,7 +117,7 @@ header{
 [data-video-container]{
   margin: 1em;
   display: grid;
-  grid-template-columns: repeat(3,1fr);
+  grid-template-columns: repeat(2,1fr);
   grid-auto-rows: 370px;
   grid-gap: 1em;
   video{
@@ -30,14 +127,21 @@ header{
     pointer-events: none;
   }
   .video-placeholder{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #3c4154;
     width: 100%;
     height: 100%;
-    background: #9cabd5;
+    background: #b1caf5;
   }
 }
 
 .stream-container{
   position: relative;
+  border: solid 1px #b1caf5;
+  overflow: hidden;
+  border-radius: 10px;
   stream-control-btn {
     display: inline-flex;
     padding: 0.5em;
@@ -56,7 +160,7 @@ header{
       background-color: #b72701;
     }
     &[data-active = "true"] {
-      background-color: #9cabd5;
+      background-color: #3c4154;
     }
   }
 }

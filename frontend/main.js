@@ -13,10 +13,31 @@ function onMessage(m){
 const peerManager = new PeerManager
 const room = new Room(onMessage)
 
-navigator.mediaDevices.getUserMedia({
-    video:false,
-    audio:true
-}).then((stream)=>{
+function getStream(){
+    return new Promise((resolve,reject)=>{
+        navigator.mediaDevices.getUserMedia({video:true,audio:true})
+            .then((stream)=>{
+                resolve(stream)
+            })
+            .catch((e)=>{
+                navigator.mediaDevices.getUserMedia({video:true,audio:false})
+                    .then((stream)=>{
+                        resolve(stream)
+                    })
+                    .catch((e)=>{
+                        navigator.mediaDevices.getUserMedia({video:false,audio:true})
+                            .then((stream)=>{
+                                resolve(stream)
+                            })
+                            .catch((e)=>{
+                                reject({error:"no stream"})
+                            })
+                    })
+            })
+    })
+}
+
+getStream().then((stream)=>{
     peerManager.setStream(stream)
 
     let streamView = new StreamView(null,stream)
@@ -39,6 +60,8 @@ navigator.mediaDevices.getUserMedia({
         }
         peerManager.broadcastP2P(`video=${value}`)
     })
+}).catch((e)=>{
+    console.log(e)
 })
 
 
