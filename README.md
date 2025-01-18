@@ -1,6 +1,3 @@
-Voici un exemple de README en Markdown : 
-
-
 # **Exemple de Correction pour le TP Final : Application de Visioconférence**
 
 Ceci est un exemple de correction pour le TP final.  
