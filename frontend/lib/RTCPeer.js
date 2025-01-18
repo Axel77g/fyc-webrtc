@@ -1,10 +1,14 @@
 import {SignalementMessage} from "./Room.js";
+import {Queue} from "./Queue.js";
 
 /**
  * @module Votre première peer WebRTC (events, et state de l’objet PeerConnectection)
  */
 export class RTCPeer extends RTCPeerConnection{
     static DEFAULT_DATACHANNEL_LABEL = "default"
+
+
+    iceCandidateQueue = new Queue()
 
     // @module Communication - Les MediaChannel
     remoteStream = new MediaStream()
@@ -15,6 +19,11 @@ export class RTCPeer extends RTCPeerConnection{
     constructor(clientID) {
         super({
             iceServers: [
+                {
+                    urls:"turn:fyc.agweb.dev:3550",
+                    username:"axel",
+                    credential:"password1234"
+                },
                 { urls: "stun:stun.l.google.com:19302" },
                 { urls: "stun:stun.l.google.com:5349" },
                 { urls: "stun:stun1.l.google.com:3478" },
@@ -36,10 +45,8 @@ export class RTCPeer extends RTCPeerConnection{
     handleIceCandidate(callback){
         this.addEventListener("icecandidate",(candidateEvent) => {
             if (!candidateEvent.candidate) {
-                console.log('Got final candidate!');
                 return;
             }
-            console.log('Got candidate: ', candidateEvent.candidate);
             const iceMessage = new SignalementMessage()
                 .setType(SignalementMessage.TYPES.ICE_CANDIDATE)
                 .setContent(candidateEvent.candidate)
