@@ -20,9 +20,9 @@ export class RTCPeer extends RTCPeerConnection{
         super({
             iceServers: [
                 {
-                    urls:"turn:fyc.agweb.dev:3550",
-                    username:"axel",
-                    credential:"password1234"
+                    urls:"turn:yourdomain:3550",
+                    username:"username",
+                    credential:"credential"
                 },
                 { urls: "stun:stun.l.google.com:19302" },
                 { urls: "stun:stun.l.google.com:5349" },
