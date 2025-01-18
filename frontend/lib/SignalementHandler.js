@@ -44,7 +44,10 @@ export class SignalementHandler{
             })
         })
         peer.createDataChannel(RTCPeer.DEFAULT_DATACHANNEL_LABEL) // @important il faut créer une channel
-        const offer = await peer.createOffer()
+        const offer = await peer.createOffer({
+            offerToReceiveAudio: true,
+            offerToReceiveVideo: true
+        })
         await peer.setLocalDescription(offer)
 
         const responseMessage = new SignalementMessage()
